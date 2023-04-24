@@ -1,7 +1,7 @@
 name: Hello World PR Comment
 
 on:
-  pull_request_review_comment:
+  issue_comment:
     types: [created]
 
 jobs:
@@ -9,11 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check for "hello" in comment
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const body = context.payload.comment.body.toLowerCase();
-            if (body.includes('hello')) {
-              console.log('Hello, world!');
-            }
+        if: contains(github.event.comment.body, 'hello')
+        run: echo "Hello, world!"
