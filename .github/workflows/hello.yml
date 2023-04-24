@@ -11,3 +11,21 @@ jobs:
       - name: Check for "hello" in comment
         if: contains(github.event.comment.body, 'hello')
         run: echo "Hello, world!"
+      - name: Post result as comment
+        if: always()
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const payload = {
+              body: 'Hello, world!',
+            };
+            const url = `https://api.github.com/repos/${context.repo.owner}/${context.repo.repo}/issues/${github.event.issue.number}/comments`;
+            await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+              },
+              body: JSON.stringify(payload),
+            });
